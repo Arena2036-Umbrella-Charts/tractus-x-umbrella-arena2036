@@ -1,0 +1,353 @@
+{{- $fullName := include "basyx.fullname" . -}}
+
+###############################################################################
+# MongoDB
+###############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-mongo
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    app: {{ $fullName }}-mongo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-mongo
+spec:
+  selector:
+    matchLabels:
+      app: {{ $fullName }}-mongo
+  template:
+    metadata:
+      labels:
+        app: {{ $fullName }}-mongo
+    spec:
+      containers:
+        - name: mongo
+          image: {{ .Values.mongo.image }}
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: {{ .Values.mongo.username }}
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: {{ .Values.mongo.password }}
+          ports:
+            - containerPort: 27017
+
+---
+
+###############################################################################
+# MQTT
+###############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-mqtt
+spec:
+  ports:
+    - port: {{ .Values.mqtt.port }}
+      targetPort: {{ .Values.mqtt.port }}
+  selector:
+    app: {{ $fullName }}-mqtt
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-mqtt
+spec:
+  selector:
+    matchLabels:
+      app: {{ $fullName }}-mqtt
+  template:
+    metadata:
+      labels:
+        app: {{ $fullName }}-mqtt
+    spec:
+      containers:
+        - name: mqtt
+          image: {{ .Values.mqtt.image }}
+          ports:
+            - containerPort: {{ .Values.mqtt.port }}
+          volumeMounts:
+            - mountPath: /mosquitto/config
+              name: mqtt-config
+      volumes:
+        - name: mqtt-config
+          configMap:
+            name: mqtt-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mqtt-config
+data:
+  mosquitto.conf: |
+    {{ .Files.Get "resources/mosquitto/mosquitto.conf" | nindent 4 }}
+
+---
+
+###############################################################################
+# AAS Environment
+###############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-aas-env
+spec:
+  ports:
+    - port: {{ .Values.aasEnv.port }}
+      targetPort: {{ .Values.aasEnv.port }}
+  selector:
+    app: {{ $fullName }}-aas-env
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-aas-env
+spec:
+  selector:
+    matchLabels:
+      app: {{ $fullName }}-aas-env
+  template:
+    metadata:
+      labels:
+        app: {{ $fullName }}-aas-env
+    spec:
+      containers:
+        - name: aas-env
+          image: {{ .Values.aasEnv.image }}
+          ports:
+            - containerPort: {{ .Values.aasEnv.port }}
+          volumeMounts:
+            - mountPath: /application/application.properties
+              name: aas-env-properties
+            - mountPath: /application/aas
+              name: aas-data
+      volumes:
+        - name: aas-env-properties
+          configMap:
+            name: aas-env-config
+        - name: aas-data
+          persistentVolumeClaim:
+            claimName: aas-data-pvc
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aas-env-config
+data:
+  application.properties: |
+    {{ .Files.Get "resources/aas-env.properties" | nindent 4 }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aas-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+###############################################################################
+# AAS Registry
+###############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-aas-registry
+spec:
+  ports:
+    - port: {{ .Values.aasRegistry.port }}
+      targetPort: 8080
+  selector:
+    app: {{ $fullName }}-aas-registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-aas-registry
+spec:
+  selector:
+    matchLabels:
+      app: {{ $fullName }}-aas-registry
+  template:
+    metadata:
+      labels:
+        app: {{ $fullName }}-aas-registry
+    spec:
+      containers:
+        - name: aas-registry
+          image: {{ .Values.aasRegistry.image }}
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /workspace/config/application.yml
+              name: aas-registry-config
+      volumes:
+        - name: aas-registry-config
+          configMap:
+            name: aas-registry-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aas-registry-config
+data:
+  application.yml: |
+    {{ .Files.Get "resources/aas-registry.yml" | nindent 4 }}
+
+---
+
+###############################################################################
+# SM Registry
+###############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-sm-registry
+spec:
+  ports:
+    - port: {{ .Values.smRegistry.port }}
+      targetPort: 8080
+  selector:
+    app: {{ $fullName }}-sm-registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-sm-registry
+spec:
+  selector:
+    matchLabels:
+      app: {{ $fullName }}-sm-registry
+  template:
+    metadata:
+      labels:
+        app: {{ $fullName }}-sm-registry
+    spec:
+      containers:
+        - name: sm-registry
+          image: {{ .Values.smRegistry.image }}
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /workspace/config/application.yml
+              name: sm-registry-config
+      volumes:
+        - name: sm-registry-config
+          configMap:
+            name: sm-registry-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sm-registry-config
+data:
+  application.yml: |
+    {{ .Files.Get "resources/sm-registry.yml" | nindent 4 }}
+
+---
+
+###############################################################################
+# AAS Discovery
+###############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-aas-discovery
+spec:
+  ports:
+    - port: {{ .Values.aasDiscovery.port }}
+      targetPort: 8081
+  selector:
+    app: {{ $fullName }}-aas-discovery
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-aas-discovery
+spec:
+  selector:
+    matchLabels:
+      app: {{ $fullName }}-aas-discovery
+  template:
+    metadata:
+      labels:
+        app: {{ $fullName }}-aas-discovery
+    spec:
+      containers:
+        - name: aas-discovery
+          image: {{ .Values.aasDiscovery.image }}
+          ports:
+            - containerPort: 8081
+          volumeMounts:
+            - mountPath: /application/application.properties
+              name: aas-discovery-properties
+      volumes:
+        - name: aas-discovery-properties
+          configMap:
+            name: aas-discovery-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aas-discovery-config
+data:
+  application.properties: |
+    {{ .Files.Get "resources/aas-discovery.properties" | nindent 4 }}
+
+---
+
+###############################################################################
+# AAS Web UI
+###############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-aas-web-ui
+spec:
+  ports:
+    - port: {{ .Values.aasWebUI.port }}
+      targetPort: 3000
+  selector:
+    app: {{ $fullName }}-aas-web-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}-aas-web-ui
+spec:
+  selector:
+    matchLabels:
+      app: {{ $fullName }}-aas-web-ui
+  template:
+    metadata:
+      labels:
+        app: {{ $fullName }}-aas-web-ui
+    spec:
+      containers:
+        - name: aas-web-ui
+          image: {{ .Values.aasWebUI.image }}
+          ports:
+            - containerPort: 3000
+          env:
+            - name: AAS_REGISTRY_PATH
+              value: {{ .Values.aasWebUI.aasRegistryPath }}
+            - name: SUBMODEL_REGISTRY_PATH
+              value: {{ .Values.aasWebUI.submodelRegistryPath }}
+            - name: AAS_DISCOVERY_PATH
+              value: {{ .Values.aasWebUI.aasDiscoveryPath }}
+            - name: AAS_REPO_PATH
+              value: {{ .Values.aasWebUI.aasRepoPath }}
+            - name: SUBMODEL_REPO_PATH
+              value: {{ .Values.aasWebUI.submodelRepoPath }}
+            - name: CD_REPO_PATH
+              value: {{ .Values.aasWebUI.cdRepoPath }}
