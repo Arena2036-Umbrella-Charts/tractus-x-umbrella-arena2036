@@ -834,7 +834,7 @@ tx-data-provider:
   simple-data-backend:
     nameOverride: dataprovider-submodelserver
     ingress:
-      enabled: true
+      enabled: false
 
 semantic-hub:
   enabled: true
@@ -852,7 +852,7 @@ semantic-hub:
     readinessProbe:
       initialDelaySeconds: 200
   graphdb:
-    enabled: true
+    enabled: false
     image: jena-fuseki-docker:4.7.0
     imagePullPolicy: Never
     storageClassName: ""
@@ -963,25 +963,40 @@ mqtt:
 aasEnv:
   image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
   port: 8081
+  ingress:
+    enabled: true
+    hostname: aas-env.arena.test
 
 aasRegistry:
   image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
   port: 8082
+  ingress:
+    enabled: true
+    hostname: aas-registry.arena.test
 
 smRegistry:
   image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
   port: 8083
+  ingress:
+    enabled: true
+    hostname: sm-registry.arena.test
 
 aasDiscovery:
   image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
   port: 8084
+  ingress:
+    enabled: true
+    hostname: aas-discovery.arena.test
 
 aasWebUI:
   image: eclipsebasyx/aas-gui:v2-240515
   port: 3000
-  aasRegistryPath: "http://localhost:8082"
-  submodelRegistryPath: "http://localhost:8083"
-  aasDiscoveryPath: "http://localhost:8084"
-  aasRepoPath: "http://localhost:8081/shells"
-  submodelRepoPath: "http://localhost:8081/submodels"
-  cdRepoPath: "http://localhost:8081/concept-descriptions"
+  aasRegistryPath: http://basyx-aas-registry:8080
+  submodelRegistryPath: http://basyx-sm-registry:8080
+  aasDiscoveryPath: http://basyx-aas-discovery:8081
+  aasRepoPath: http://basyx-aas-env:8081/shells
+  submodelRepoPath: http://basyx-aas-env:8081/submodels
+  cdRepoPath: http://basyx-aas-env:8081/concept-descriptions
+  ingress:
+    enabled: true
+    hostname: aas-webui.arena.test

@@ -37,7 +37,6 @@ spec:
               value: {{ .Values.mongo.password }}
           ports:
             - containerPort: 27017
-
 ---
 
 ###############################################################################
@@ -87,7 +86,6 @@ metadata:
 data:
   mosquitto.conf: |
     {{ .Files.Get "resources/mosquitto/mosquitto.conf" | nindent 4 }}
-
 ---
 
 ###############################################################################
@@ -153,7 +151,25 @@ spec:
   resources:
     requests:
       storage: 1Gi
-
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-aas-env
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: {{ .Values.aasEnv.ingress.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-aas-env
+                port:
+                  number: {{ .Values.aasEnv.port }}
 ---
 
 ###############################################################################
@@ -203,7 +219,25 @@ metadata:
 data:
   application.yml: |
     {{ .Files.Get "resources/aas-registry.yml" | nindent 4 }}
-
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-aas-registry
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: {{ .Values.aasRegistry.ingress.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-aas-registry
+                port:
+                  number: {{ .Values.aasRegistry.port }}
 ---
 
 ###############################################################################
@@ -253,7 +287,25 @@ metadata:
 data:
   application.yml: |
     {{ .Files.Get "resources/sm-registry.yml" | nindent 4 }}
-
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-sm-registry
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: {{ .Values.smRegistry.ingress.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-sm-registry
+                port:
+                  number: {{ .Values.smRegistry.port }}
 ---
 
 ###############################################################################
@@ -303,7 +355,25 @@ metadata:
 data:
   application.properties: |
     {{ .Files.Get "resources/aas-discovery.properties" | nindent 4 }}
-
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-aas-discovery
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: {{ .Values.aasDiscovery.ingress.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-aas-discovery
+                port:
+                  number: {{ .Values.aasDiscovery.port }}
 ---
 
 ###############################################################################
@@ -351,3 +421,22 @@ spec:
               value: {{ .Values.aasWebUI.submodelRepoPath }}
             - name: CD_REPO_PATH
               value: {{ .Values.aasWebUI.cdRepoPath }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-aas-web-ui
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: {{ .Values.aasWebUI.ingress.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-aas-web-ui
+                port:
+                  number: {{ .Values.aasWebUI.port }}
