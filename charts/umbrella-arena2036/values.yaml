@@ -31,17 +31,17 @@ portal:
     primary:
       persistence:
         enabled: false
-  portalAddress: "http://portal.arena.test"
-  portalBackendAddress: "http://portal-backend.arena.test"
-  centralidpAddress: "http://centralidp.arena.test"
-  sharedidpAddress: "http://sharedidp.arena.test"
-  semanticsAddress: "http://semantics.arena.test"
-  bpdmPartnersPoolAddress: "http://business-partners.arena.test"
-  bpdmPortalGateAddress: "http://business-partners.arena.test"
-  custodianAddress: "http://managed-identity-wallets.arena.test"
-  sdfactoryAddress: "http://sdfactory.arena.test"
-  clearinghouseAddress: "http://validation.arena.test"
-  clearinghouseTokenAddress: "http://keycloak.arena.test/realms/example/protocol/openid-connect/token"
+  portalAddress: "http://portal.tractus-x-06.arena2036.de"
+  portalBackendAddress: "http://portal-backend.tractus-x-06.arena2036.de"
+  centralidpAddress: "http://centralidp.tractus-x-06.arena2036.de"
+  sharedidpAddress: "http://sharedidp.tractus-x-06.arena2036.de"
+  semanticsAddress: "http://semantics.tractus-x-06.arena2036.de"
+  bpdmPartnersPoolAddress: "http://business-partners.tractus-x-06.arena2036.de"
+  bpdmPortalGateAddress: "http://business-partners.tractus-x-06.arena2036.de"
+  custodianAddress: "http://managed-identity-wallets.tractus-x-06.arena2036.de"
+  sdfactoryAddress: "http://sdfactory.tractus-x-06.arena2036.de"
+  clearinghouseAddress: "http://validation.tractus-x-06.arena2036.de"
+  clearinghouseTokenAddress: "http://keycloak.tractus-x-06.arena2036.de/realms/example/protocol/openid-connect/token"
   frontend:
     ingress:
       enabled: true
@@ -51,16 +51,16 @@ portal:
         nginx.ingress.kubernetes.io/rewrite-target: "/$1"
         nginx.ingress.kubernetes.io/use-regex: "true"
         nginx.ingress.kubernetes.io/enable-cors: "true"
-        nginx.ingress.kubernetes.io/cors-allow-origin: "http://*.arena.test"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "http://*.tractus-x-06.arena2036.de"
       # uncomment the following lines for tls
       # tls:
       #   # -- Provide tls secret.
       #   - secretName: "portal.arena.test-tls"
       #     # -- Provide host for tls secret.
       #     hosts:
-      #       - "portal.arena.test"
+      #       - "portal.tractus-x-06.arena2036.de"
       hosts:
-        - host: "portal.arena.test"
+        - host: "portal.tractus-x-06.arena2036.de"
           paths:
             - path: "/(.*)"
               pathType: "ImplementationSpecific"
@@ -144,10 +144,10 @@ portal:
         clientId: "sa-cl2-03"
         clientSecret: "wyNYzSnyu4iGvj17XgLSl0aQxAPjTjmI"
     mailing:
-      host: "smtp.arena.test"
+      host: "smtp.tractus-x-06.arena2036.de"
       port: "587"
       user: "smtp-user"
-      senderEmail: "smtp@arena.test"
+      senderEmail: "smtp@tractus-x-06.arena2036.de"
       password: ""
     portalmigrations:
       logging:
@@ -155,17 +155,17 @@ portal:
     provisioning:
       sharedRealm:
         smtpServer:
-          host: "smtp.arena.test"
+          host: "smtp.tractus-x-06.arena2036.de"
           port: "587"
           user: "smtp-user"
           password: ""
-          from: "smtp@arena.test"
-          replyTo: "smtp@arena.test"
-    # -- docs: http://portal-backend.arena.test/api/administration/swagger/index.html
-    # http://portal-backend.arena.test/api/registration/swagger/index.html
-    # http://portal-backend.arena.test/api/apps/swagger/index.html
-    # http://portal-backend.arena.test/api/services/swagger/index.html
-    # http://portal-backend.arena.test/api/notification/swagger/index.html
+          from: "smtp@tractus-x-06.arena2036.de"
+          replyTo: "smtp@tractus-x-06.arena2036.de"
+    # -- docs: http://portal-backend.tractus-x-06.arena2036.de/api/administration/swagger/index.html
+    # http://portal-backend.tractus-x-06.arena2036.de/api/registration/swagger/index.html
+    # http://portal-backend.tractus-x-06.arena2036.de/api/apps/swagger/index.html
+    # http://portal-backend.tractus-x-06.arena2036.de/api/services/swagger/index.html
+    # http://portal-backend.tractus-x-06.arena2036.de/api/notification/swagger/index.html
     ingress:
       enabled: true
       name: "portal-backend"
@@ -175,16 +175,16 @@ portal:
         nginx.ingress.kubernetes.io/use-regex: "true"
         nginx.ingress.kubernetes.io/enable-cors: "true"
         nginx.ingress.kubernetes.io/proxy-body-size: "8m"
-        nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:3000, http://*.arena.test"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:3000, http://*.tractus-x-06.arena2036.de"
       # uncomment the following lines for tls
       # tls:
       #   # -- Provide tls secret.
       #   - secretName: "portal-backend.arena.test-tls"
       #     # -- Provide host for tls secret.
       #     hosts:
-      #       - "portal-backend.arena.test"
+      #       - "portal-backend.tractus-x-06.arena2036.de"
       hosts:
-        - host: "portal-backend.arena.test"
+        - host: "portal-backend.tractus-x-06.arena2036.de"
           paths:
             - path: "/api/registration"
               pathType: "Prefix"
@@ -241,8 +241,8 @@ centralidp:
             echo "Copying realms..."
             cp -R /import/catenax-central/R2403/realms/* /realms
         volumeMounts:
-        - name: realms
-          mountPath: "/realms"
+          - name: realms
+            mountPath: "/realms"
       - name: theme-import
         image: docker.io/tractusx/portal-iam:v2.1.0
         imagePullPolicy: IfNotPresent
@@ -254,8 +254,8 @@ centralidp:
             echo "Copying themes..."
             cp -R /import/themes/catenax-central/* /themes
         volumeMounts:
-        - name: themes
-          mountPath: "/themes"
+          - name: themes
+            mountPath: "/themes"
       # uncomment the following line for tls
       # - name: init-certs
       #   image: docker.io/bitnami/keycloak:22.0.3-debian-11-r14
@@ -309,13 +309,13 @@ centralidp:
     ingress:
       enabled: true
       ingressClassName: "nginx"
-      hostname: "centralidp.arena.test"
+      hostname: "centralidp.tractus-x-06.arena2036.de"
       annotations:
         # uncomment the following line for tls
         # cert-manager.io/cluster-issuer: "my-ca-issuer"
         nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
         nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
-        nginx.ingress.kubernetes.io/cors-allow-origin: "http://centralidp.arena.test"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "http://centralidp.tractus-x-06.arena2036.de"
         nginx.ingress.kubernetes.io/enable-cors: "true"
         nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
         nginx.ingress.kubernetes.io/proxy-buffering: "on"
@@ -358,8 +358,8 @@ sharedidp:
             echo "Copying realms..."
             cp -R /import/catenax-shared/realms/* /realms
         volumeMounts:
-        - name: realms
-          mountPath: "/realms"
+          - name: realms
+            mountPath: "/realms"
       - name: theme-import
         image: docker.io/tractusx/portal-iam:v2.1.0
         imagePullPolicy: IfNotPresent
@@ -373,10 +373,10 @@ sharedidp:
             echo "Copying themes-catenax-shared-portal..."
             cp -R /import/themes/catenax-shared-portal/* /themes-catenax-shared-portal
         volumeMounts:
-        - name: themes-catenax-shared
-          mountPath: "/themes-catenax-shared"
-        - name: themes-catenax-shared-portal
-          mountPath: "/themes-catenax-shared-portal"
+          - name: themes-catenax-shared
+            mountPath: "/themes-catenax-shared"
+          - name: themes-catenax-shared-portal
+            mountPath: "/themes-catenax-shared-portal"
       # uncomment the following line for tls
       # - name: init-certs
       #   image: docker.io/bitnami/keycloak:22.0.3-debian-11-r14
@@ -434,13 +434,13 @@ sharedidp:
     ingress:
       enabled: true
       ingressClassName: "nginx"
-      hostname: "sharedidp.arena.test"
+      hostname: "sharedidp.tractus-x-06.arena2036.de"
       annotations:
         # uncomment the following line for tls
         # cert-manager.io/cluster-issuer: "my-ca-issuer"
         nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
         nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
-        nginx.ingress.kubernetes.io/cors-allow-origin: "http://sharedidp.arena.test"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "http://sharedidp.tractus-x-06.arena2036.de"
         nginx.ingress.kubernetes.io/enable-cors: "true"
         nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
         nginx.ingress.kubernetes.io/proxy-buffering: "on"
@@ -493,20 +493,20 @@ discoveryfinder:
       initialDelaySeconds: 200
     readinessProbe:
       initialDelaySeconds: 200
-    host: semantics.arena.test
+    host: semantics.tractus-x-06.arena2036.de
     properties:
       discoveryfinder:
         initialEndpoints:
           - type: bpn
-            endpointAddress: http://portal-backend.arena.test/api/administration/Connectors/discovery
+            endpointAddress: http://portal-backend.tractus-x-06.arena2036.de/api/administration/Connectors/discovery
             description: Service to discover connector endpoints based on bpns
-            documentation: http://portal-backend.arena.test/api/administration/swagger/index.html
+            documentation: http://portal-backend.tractus-x-06.arena2036.de/api/administration/swagger/index.html
     idp:
-      issuerUri: "http://centralidp.arena.test/auth/realms/CX-Central"
+      issuerUri: "http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central"
       publicClientId: "Cl21-CX-DF"
     dataSource:
       url: "jdbc:postgresql://{{ .Release.Name }}-discoveryfinder-postgresql:5432/discoveryfinder"
-    # -- docs: http://semantics.arena.test/discoveryfinder/swagger-ui/index.html
+    # -- docs: http://semantics.tractus-x-06.arena2036.de/discoveryfinder/swagger-ui/index.html
     ingress:
       enabled: false
       tls: false
@@ -534,13 +534,13 @@ selfdescription:
   sdfactory:
     secret:
       # -- JWK Set URI
-      jwkSetUri: "http://centralidp.arena.test/auth/realms/CX-Central/protocol/openid-connect/certs"
+      jwkSetUri: "http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/certs"
       # -- Custodian wallet client id
       clientId: "sa-cl5-custodian-1"
       # -- Custodian wallet client secret
       clientSecret: "6pnnap7byS1TImL9Uj7g2psud9Fdq4tJ"
       # -- Keycloak URL
-      authServerUrl: "http://centralidp.arena.test/auth"
+      authServerUrl: "http://centralidp.tractus-x-06.arena2036.de/auth"
       # -- Keycloak Realm detail
       realm: "CX-Central"
       # -- Keycloak Resource detail
@@ -560,7 +560,7 @@ selfdescription:
   ingress:
     enabled: true
     hosts:
-      - host: "sdfactory.arena.test"
+      - host: "sdfactory.tractus-x-06.arena2036.de"
         paths:
           - path: "/"
             pathType: "Prefix"
@@ -568,7 +568,7 @@ selfdescription:
     # tls:
     # - tlsName: sdfactory.arena.test-tls
     #   hosts:
-    #     - sdfactory.arena.test.net
+    #     - sdfactory.tractus-x-06.arena2036.de
     className: "nginx"
     # annotations:
     #   # uncomment the following line for tls
@@ -630,7 +630,7 @@ managed-identity-wallet:
   #   - name: shared-certs
   #     mountPath: /opt/java/openjdk/lib/security
   miw:
-    host: "managed-identity-wallets.arena.test"
+    host: "managed-identity-wallets.tractus-x-06.arena2036.de"
     authorityWallet:
       bpn: &authority-bpn "BPNL00000003CRHK"
       name: "Catena-X"
@@ -638,7 +638,7 @@ managed-identity-wallet:
       host: "{{ .Release.Name }}-miw-postgres"
       secret: "{{ .Release.Name }}-miw-postgres"
     keycloak:
-      url: "http://centralidp.arena.test/auth"
+      url: "http://centralidp.tractus-x-06.arena2036.de/auth"
       realm: "CX-Central"
       clientId: "Cl5-CX-Custodian"
     ssi:
@@ -659,11 +659,11 @@ managed-identity-wallet:
     initialDelaySeconds: 90
   readinessProbe:
     initialDelaySeconds: 90
-  # -- docs: http://managed-identity-wallets.arena.test/ui/swagger-ui/index.html
+  # -- docs: http://managed-identity-wallets.tractus-x-06.arena2036.de/ui/swagger-ui/index.html
   ingress:
     enabled: true
     hosts:
-      - host: "managed-identity-wallets.arena.test"
+      - host: "managed-identity-wallets.tractus-x-06.arena2036.de"
         paths:
           - path: "/"
             pathType: "ImplementationSpecific"
@@ -671,12 +671,12 @@ managed-identity-wallet:
     # tls:
     #   - secretName: "managed-identity-wallets.arena.test-tls"
     #     hosts:
-    #       - "managed-identity-wallets.arena.test"
+    #       - "managed-identity-wallets.tractus-x-06.arena2036.de"
     className: "nginx"
     annotations:
       # uncomment the following line for tls
       # cert-manager.io/cluster-issuer: "my-ca-issuer"
-      nginx.ingress.kubernetes.io/cors-allow-origin: http://portal.arena.test
+      nginx.ingress.kubernetes.io/cors-allow-origin: http://portal.tractus-x-06.arena2036.de
       nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
       nginx.ingress.kubernetes.io/cors-allow-methods: GET
       nginx.ingress.kubernetes.io/enable-cors: "true"
@@ -694,10 +694,10 @@ dataconsumerOne:
     controlplane:
       ssi:
         miw:
-          url: http://managed-identity-wallets.arena.test
+          url: http://managed-identity-wallets.tractus-x-06.arena2036.de
           authorityId: *authority-bpn
         oauth:
-          tokenurl: http://centralidp.arena.test/auth/realms/CX-Central/protocol/openid-connect/token
+          tokenurl: http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/token
           client:
             id: satest01
             secretAlias: edc-miw-keycloak-secret
@@ -706,7 +706,7 @@ dataconsumerOne:
           authKey: TEST1
       ingresses:
         - enabled: true
-          hostname: "dataconsumer-1-controlplane.arena.test"
+          hostname: "dataconsumer-1-controlplane.tractus-x-06.arena2036.de"
           endpoints:
             - default
             - protocol
@@ -717,7 +717,7 @@ dataconsumerOne:
     dataplane:
       ingresses:
         - enabled: true
-          hostname: "dataconsumer-1-dataplane.arena.test"
+          hostname: "dataconsumer-1-dataplane.tractus-x-06.arena2036.de"
           endpoints:
             - default
             - public
@@ -769,10 +769,10 @@ tx-data-provider:
     controlplane:
       ssi:
         miw:
-          url: http://managed-identity-wallets.arena.test
+          url: http://managed-identity-wallets.tractus-x-06.arena2036.de
           authorityId: *authority-bpn
         oauth:
-          tokenurl: http://centralidp.arena.test/auth/realms/CX-Central/protocol/openid-connect/token
+          tokenurl: http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/token
           client:
             id: satest02
             secretAlias: edc-miw-keycloak-secret
@@ -781,7 +781,7 @@ tx-data-provider:
           authKey: TEST2
       ingresses:
         - enabled: true
-          hostname: "dataprovider-controlplane.arena.test"
+          hostname: "dataprovider-controlplane.tractus-x-06.arena2036.de"
           endpoints:
             - default
             - protocol
@@ -792,7 +792,7 @@ tx-data-provider:
     dataplane:
       ingresses:
         - enabled: true
-          hostname: "dataprovider-dataplane.arena.test"
+          hostname: "dataprovider-dataplane.tractus-x-06.arena2036.de"
           endpoints:
             - default
             - public
@@ -871,10 +871,10 @@ dataconsumerTwo:
     controlplane:
       ssi:
         miw:
-          url: http://managed-identity-wallets.arena.test
+          url: http://managed-identity-wallets.tractus-x-06.arena2036.de
           authorityId: *authority-bpn
         oauth:
-          tokenurl: http://centralidp.arena.test/auth/realms/CX-Central/protocol/openid-connect/token
+          tokenurl: http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/token
           client:
             id: satest03
             secretAlias: edc-miw-keycloak-secret
@@ -883,7 +883,7 @@ dataconsumerTwo:
           authKey: TEST3
       ingresses:
         - enabled: true
-          hostname: "dataconsumer-2-controlplane.arena.test"
+          hostname: "dataconsumer-2-controlplane.tractus-x-06.arena2036.de"
           endpoints:
             - default
             - protocol
@@ -894,7 +894,7 @@ dataconsumerTwo:
     dataplane:
       ingresses:
         - enabled: true
-          hostname: "dataconsumer-2-dataplane.arena.test"
+          hostname: "dataconsumer-2-dataplane.tractus-x-06.arena2036.de"
           endpoints:
             - default
             - public
@@ -939,10 +939,10 @@ pgadmin4:
     enabled: true
     ingressClassName: "nginx"
     hosts:
-      - host: pgadmin4.arena.test
+      - host: pgadmin4.tractus-x-06.arena2036.de
         paths:
-        - path: /
-          pathType: Prefix
+          - path: /
+            pathType: Prefix
 
 # ##############################################################################
 # Basyx
@@ -965,28 +965,28 @@ aasEnv:
   port: 8081
   ingress:
     enabled: true
-    hostname: aas-env.arena.test
+    hostname: aas-env.tractus-x-06.arena2036.de
 
 aasRegistry:
   image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
   port: 8082
   ingress:
     enabled: true
-    hostname: aas-registry.arena.test
+    hostname: aas-registry.tractus-x-06.arena2036.de
 
 smRegistry:
   image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
   port: 8083
   ingress:
     enabled: true
-    hostname: sm-registry.arena.test
+    hostname: sm-registry.tractus-x-06.arena2036.de
 
 aasDiscovery:
   image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
   port: 8084
   ingress:
     enabled: true
-    hostname: aas-discovery.arena.test
+    hostname: aas-discovery.tractus-x-06.arena2036.de
 
 aasWebUI:
   image: eclipsebasyx/aas-gui:v2-240515
@@ -999,4 +999,4 @@ aasWebUI:
   cdRepoPath: http://basyx-aas-env:8081/concept-descriptions
   ingress:
     enabled: true
-    hostname: aas-webui.arena.test
+    hostname: aas-webui.tractus-x-06.arena2036.de
