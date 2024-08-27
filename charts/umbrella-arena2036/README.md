@@ -337,7 +337,7 @@ Proceed with the login to the <http://portal.arena.test> to verify that everythi
 Credentials to log into the initial example realm (CX-Operator):
 
 ```
-cx-operator@arena.test
+cx-operator@tx.test
 ```
 
 ```

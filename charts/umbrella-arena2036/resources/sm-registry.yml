@@ -7,4 +7,4 @@ basyx:
 spring:
   data:
     mongodb:
-      uri: mongodb://mongoAdmin:mongoPassword@mongo:27017
+      uri: mongodb://mongoAdmin:mongoPassword@basyx-mongo:27017

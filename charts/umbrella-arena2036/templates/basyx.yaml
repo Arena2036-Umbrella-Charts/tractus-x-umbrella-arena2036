@@ -91,39 +91,42 @@ data:
 ###############################################################################
 # AAS Environment
 ###############################################################################
+{{- range .Values.basyx.deployments }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $fullName }}-aas-env
+  name: {{ $fullName }}-{{ .name }}-aas-env
 spec:
   ports:
-    - port: {{ .Values.aasEnv.port }}
-      targetPort: {{ .Values.aasEnv.port }}
+    - port: {{ $.Values.aasEnv.port }}
+      targetPort: {{ $.Values.aasEnv.port }}
   selector:
-    app: {{ $fullName }}-aas-env
+    app: {{ $fullName }}-{{ .name }}-aas-env
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $fullName }}-aas-env
+  name: {{ $fullName }}-{{ .name }}-aas-env
 spec:
   selector:
     matchLabels:
-      app: {{ $fullName }}-aas-env
+      app: {{ $fullName }}-{{ .name }}-aas-env
   template:
     metadata:
       labels:
-        app: {{ $fullName }}-aas-env
+        app: {{ $fullName }}-{{ .name }}-aas-env
     spec:
       containers:
         - name: aas-env
-          image: {{ .Values.aasEnv.image }}
+          image: {{ $.Values.aasEnv.image }}
           ports:
-            - containerPort: {{ .Values.aasEnv.port }}
+            - containerPort: {{ $.Values.aasEnv.port }}
           volumeMounts:
             - mountPath: /application/application.properties
+              subPath: application.properties
               name: aas-env-properties
             - mountPath: /application/aas
+              subPath: aas
               name: aas-data
       volumes:
         - name: aas-env-properties
@@ -133,13 +136,36 @@ spec:
           persistentVolumeClaim:
             claimName: aas-data-pvc
 ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-{{ .name }}-aas-env
+  annotations:
+    {{- with $.Values.aasEnv.ingress.annotations }}
+    annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ .name }}-aas-env.{{ $.Values.basyx.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-{{ .name }}-aas-env
+                port:
+                  number: {{ $.Values.aasEnv.port }}
+---
+{{- end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: aas-env-config
 data:
   application.properties: |
-    {{ .Files.Get "resources/aas-env.properties" | nindent 4 }}
+    {{ $.Files.Get "resources/aas-env.properties" | nindent 4 }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -151,25 +177,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ $fullName }}-aas-env
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-    - host: {{ .Values.aasEnv.ingress.hostname }}
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ $fullName }}-aas-env
-                port:
-                  number: {{ .Values.aasEnv.port }}
 ---
 
 ###############################################################################
@@ -225,7 +232,11 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}-aas-registry
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    {{- with .Values.aasRegistry.ingress.annotations }}
+    annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{/*    nginx.ingress.kubernetes.io/rewrite-target: /*/}}
 spec:
   rules:
     - host: {{ .Values.aasRegistry.ingress.hostname }}
@@ -293,7 +304,11 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}-sm-registry
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    {{- with .Values.smRegistry.ingress.annotations }}
+    annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{/*    nginx.ingress.kubernetes.io/rewrite-target: /*/}}
 spec:
   rules:
     - host: {{ .Values.smRegistry.ingress.hostname }}
@@ -342,6 +357,7 @@ spec:
             - containerPort: 8081
           volumeMounts:
             - mountPath: /application/application.properties
+              subPath: application.properties
               name: aas-discovery-properties
       volumes:
         - name: aas-discovery-properties
@@ -361,7 +377,11 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}-aas-discovery
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    {{- with .Values.aasDiscovery.ingress.annotations }}
+    annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{/*    nginx.ingress.kubernetes.io/rewrite-target: /*/}}
 spec:
   rules:
     - host: {{ .Values.aasDiscovery.ingress.hostname }}
@@ -427,7 +447,10 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}-aas-web-ui
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    {{- with .Values.aasWebUI.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{/*    nginx.ingress.kubernetes.io/rewrite-target: /*/}}
 spec:
   rules:
     - host: {{ .Values.aasWebUI.ingress.hostname }}

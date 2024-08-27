@@ -18,7 +18,7 @@
 # #############################################################################
 ---
 apiVersion: v2
-name: umbrella-basyx
+name: umbrella-arena2036
 description: |
   A Helm chart to spin up Tractus-X OSS components to simulate a complete dataspace network.
 
@@ -31,7 +31,7 @@ sources:
   - https://github.com/eclipse-basyx/basyx-java-server-sdk/
 
 type: application
-version: 0.16.0
+version: 0.17.0
 
 # when adding or updating versions of dependencies, also update list under README.md#Install
 dependencies:
@@ -53,12 +53,12 @@ dependencies:
   - condition: discoveryfinder.enabled
     name: discoveryfinder
     repository: https://eclipse-tractusx.github.io/charts/dev
-    version: 0.2.2
+    version: 0.2.5
     # bpn-discovery
   - condition: bpndiscovery.enabled
     name: bpndiscovery
     repository: https://eclipse-tractusx.github.io/charts/dev
-    version: 0.2.2
+    version: 0.2.6
     # sd-factory
   - condition: selfdescription.enabled
     name: sdfactory
@@ -74,24 +74,37 @@ dependencies:
   - condition: semantic-hub.enabled
     name: semantic-hub
     repository: https://eclipse-tractusx.github.io/charts/dev
-    version: 0.2.2
-    # TX Data Consumer 1
+    version: 0.2.3
+    # TX OEM
   - name: tx-data-provider
-    alias: dataconsumerOne
+    alias: oem
     version: 0.0.5
     repository: https://eclipse-tractusx.github.io/charts/dev
-    condition: dataconsumerOne.enabled
-    # TX Data Providers
+    condition: oem.enabled
+  # TX Tier 1
   - name: tx-data-provider
+    alias: tierone
     version: 0.0.5
     repository: https://eclipse-tractusx.github.io/charts/dev
-    condition: tx-data-provider.enabled
-    # TX Data Consumer 2
+    condition: tierone.enabled
+    # TX Tier 2 #1
   - name: tx-data-provider
-    alias: dataconsumerTwo
+    alias: tiertwonoone
     version: 0.0.5
     repository: https://eclipse-tractusx.github.io/charts/dev
-    condition: dataconsumerTwo.enabled
+    condition: tiertwonoone.enabled
+  # TX Tier 2 #2
+  - name: tx-data-provider
+    alias: tiertwonotwo
+    version: 0.0.5
+    repository: https://eclipse-tractusx.github.io/charts/dev
+    condition: tiertwonotwo.enabled
+  # TX Tier 2 #3
+  - name: tx-data-provider
+    alias: tiertwonothree
+    version: 0.0.5
+    repository: https://eclipse-tractusx.github.io/charts/dev
+    condition: tiertwonothree.enabled
     # pgadmin4 as helper tool for easy database access
   - condition: pgadmin4.enabled
     name: pgadmin4

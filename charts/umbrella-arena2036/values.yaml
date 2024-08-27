@@ -31,27 +31,28 @@ portal:
     primary:
       persistence:
         enabled: false
-  portalAddress: "http://portal.tractus-x-06.arena2036.de"
-  portalBackendAddress: "http://portal-backend.tractus-x-06.arena2036.de"
-  centralidpAddress: "http://centralidp.tractus-x-06.arena2036.de"
-  sharedidpAddress: "http://sharedidp.tractus-x-06.arena2036.de"
-  semanticsAddress: "http://semantics.tractus-x-06.arena2036.de"
-  bpdmPartnersPoolAddress: "http://business-partners.tractus-x-06.arena2036.de"
-  bpdmPortalGateAddress: "http://business-partners.tractus-x-06.arena2036.de"
-  custodianAddress: "http://managed-identity-wallets.tractus-x-06.arena2036.de"
-  sdfactoryAddress: "http://sdfactory.tractus-x-06.arena2036.de"
-  clearinghouseAddress: "http://validation.tractus-x-06.arena2036.de"
-  clearinghouseTokenAddress: "http://keycloak.tractus-x-06.arena2036.de/realms/example/protocol/openid-connect/token"
+  portalAddress: "https://portal.tractus-x-06.arena2036.de"
+  portalBackendAddress: "https://portal-backend.tractus-x-06.arena2036.de"
+  centralidpAddress: "https://centralidp.tractus-x-06.arena2036.de"
+  sharedidpAddress: "https://sharedidp.tractus-x-06.arena2036.de"
+  semanticsAddress: "https://semantics.tractus-x-06.arena2036.de"
+  bpdmPartnersPoolAddress: "https://business-partners.tractus-x-06.arena2036.de" # TODO Fix
+  bpdmPortalGateAddress: "https://business-partners.tractus-x-06.arena2036.de" # TODO Fix
+  custodianAddress: "https://managed-identity-wallets.tractus-x-06.arena2036.de"
+  sdfactoryAddress: "https://sdfactory.tractus-x-06.arena2036.de"
+  clearinghouseAddress: "https://validation.tractus-x-06.arena2036.de"
+  clearinghouseTokenAddress: "https://keycloak.tractus-x-06.arena2036.de/realms/example/protocol/openid-connect/token"
   frontend:
     ingress:
       enabled: true
       annotations:
         # uncomment the following line for tls
-        # cert-manager.io/cluster-issuer: "my-ca-issuer"
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
         nginx.ingress.kubernetes.io/rewrite-target: "/$1"
         nginx.ingress.kubernetes.io/use-regex: "true"
         nginx.ingress.kubernetes.io/enable-cors: "true"
-        nginx.ingress.kubernetes.io/cors-allow-origin: "http://*.tractus-x-06.arena2036.de"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.tractus-x-06.arena2036.de"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
       # uncomment the following lines for tls
       # tls:
       #   # -- Provide tls secret.
@@ -171,11 +172,12 @@ portal:
       name: "portal-backend"
       annotations:
         # uncomment the following line for tls
-        # cert-manager.io/cluster-issuer: "my-ca-issuer"
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
         nginx.ingress.kubernetes.io/use-regex: "true"
         nginx.ingress.kubernetes.io/enable-cors: "true"
         nginx.ingress.kubernetes.io/proxy-body-size: "8m"
-        nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:3000, http://*.tractus-x-06.arena2036.de"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:3000, http://*.tractus-x-06.arena2036.de, https://*.tractus-x-06.arena2036.de"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
       # uncomment the following lines for tls
       # tls:
       #   # -- Provide tls secret.
@@ -241,8 +243,8 @@ centralidp:
             echo "Copying realms..."
             cp -R /import/catenax-central/R2403/realms/* /realms
         volumeMounts:
-          - name: realms
-            mountPath: "/realms"
+        - name: realms
+          mountPath: "/realms"
       - name: theme-import
         image: docker.io/tractusx/portal-iam:v2.1.0
         imagePullPolicy: IfNotPresent
@@ -254,8 +256,8 @@ centralidp:
             echo "Copying themes..."
             cp -R /import/themes/catenax-central/* /themes
         volumeMounts:
-          - name: themes
-            mountPath: "/themes"
+        - name: themes
+          mountPath: "/themes"
       # uncomment the following line for tls
       # - name: init-certs
       #   image: docker.io/bitnami/keycloak:22.0.3-debian-11-r14
@@ -312,10 +314,10 @@ centralidp:
       hostname: "centralidp.tractus-x-06.arena2036.de"
       annotations:
         # uncomment the following line for tls
-        # cert-manager.io/cluster-issuer: "my-ca-issuer"
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
         nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
         nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
-        nginx.ingress.kubernetes.io/cors-allow-origin: "http://centralidp.tractus-x-06.arena2036.de"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "http://centralidp.tractus-x-06.arena2036.de, https://centralidp.tractus-x-06.arena2036.de"
         nginx.ingress.kubernetes.io/enable-cors: "true"
         nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
         nginx.ingress.kubernetes.io/proxy-buffering: "on"
@@ -437,10 +439,10 @@ sharedidp:
       hostname: "sharedidp.tractus-x-06.arena2036.de"
       annotations:
         # uncomment the following line for tls
-        # cert-manager.io/cluster-issuer: "my-ca-issuer"
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
         nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
         nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
-        nginx.ingress.kubernetes.io/cors-allow-origin: "http://sharedidp.tractus-x-06.arena2036.de"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "http://sharedidp.tractus-x-06.arena2036.de, https://sharedidp.tractus-x-06.arena2036.de"
         nginx.ingress.kubernetes.io/enable-cors: "true"
         nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
         nginx.ingress.kubernetes.io/proxy-buffering: "on"
@@ -463,7 +465,26 @@ bpndiscovery:
   enabled: true
   enablePostgres: true
   bpndiscovery:
-    authentication: false
+    enabled: true
+    host: bpndiscovery.tractus-x-06.arena2036.de
+    ingress:
+      enabled: true
+      tls: false
+      urlPrefix: "/bpndiscovery"
+      className: "nginx"
+      annotations:
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
+        nginx.ingress.kubernetes.io/rewrite-target: "/$2"
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        nginx.ingress.kubernetes.io/enable-cors: "true"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+        nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+        nginx.ingress.kubernetes.io/cors-allow-methods: "*"
+        nginx.ingress.kubernetes.io/x-forwarded-prefix: "/bpndiscovery"
+    authentication: true
+    idp:
+      issuerUri: "http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central"
+      publicClientId: "Cl22-CX-BPND"
     bpndiscoverEndpoint:
       allowedTypes: oen,wmi,passtype,manufacturerPartId
       description: Service to discover BPN for different kind of type numbers
@@ -493,14 +514,14 @@ discoveryfinder:
       initialDelaySeconds: 200
     readinessProbe:
       initialDelaySeconds: 200
-    host: semantics.tractus-x-06.arena2036.de
+    host: discoveryfinder.tractus-x-06.arena2036.de
     properties:
       discoveryfinder:
         initialEndpoints:
           - type: bpn
-            endpointAddress: http://portal-backend.tractus-x-06.arena2036.de/api/administration/Connectors/discovery
+            endpointAddress: https://portal-backend.tractus-x-06.arena2036.de/api/administration/Connectors/discovery
             description: Service to discover connector endpoints based on bpns
-            documentation: http://portal-backend.tractus-x-06.arena2036.de/api/administration/swagger/index.html
+            documentation: https://portal-backend.tractus-x-06.arena2036.de/api/administration/swagger/index.html
     idp:
       issuerUri: "http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central"
       publicClientId: "Cl21-CX-DF"
@@ -508,7 +529,7 @@ discoveryfinder:
       url: "jdbc:postgresql://{{ .Release.Name }}-discoveryfinder-postgresql:5432/discoveryfinder"
     # -- docs: http://semantics.tractus-x-06.arena2036.de/discoveryfinder/swagger-ui/index.html
     ingress:
-      enabled: false
+      enabled: true
       tls: false
       urlPrefix: "/discoveryfinder"
       className: "nginx"
@@ -534,13 +555,13 @@ selfdescription:
   sdfactory:
     secret:
       # -- JWK Set URI
-      jwkSetUri: "http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/certs"
+      jwkSetUri: "https://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/certs"
       # -- Custodian wallet client id
       clientId: "sa-cl5-custodian-1"
       # -- Custodian wallet client secret
       clientSecret: "6pnnap7byS1TImL9Uj7g2psud9Fdq4tJ"
       # -- Keycloak URL
-      authServerUrl: "http://centralidp.tractus-x-06.arena2036.de/auth"
+      authServerUrl: "https://centralidp.tractus-x-06.arena2036.de/auth"
       # -- Keycloak Realm detail
       realm: "CX-Central"
       # -- Keycloak Resource detail
@@ -570,9 +591,9 @@ selfdescription:
     #   hosts:
     #     - sdfactory.tractus-x-06.arena2036.de
     className: "nginx"
-    # annotations:
+    annotations:
     #   # uncomment the following line for tls
-    #   cert-manager.io/cluster-issuer: "my-ca-issuer"
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
 
 managed-identity-wallet:
   enabled: true
@@ -580,22 +601,22 @@ managed-identity-wallet:
     enabled: true
     # -- Map of company BPN and company name. For each of these Companies, a MIW wallet will be created.
     companies:
-      BPNL00000003AZQP: "BPN_OEM_C"
-      BPNL00000003AYRE: "BPN_OEM_A"
-      BPNL00000003AVTH: "BPN_OEM_B"
-      BPNL00000003AWSS: "BPN_IRS_TEST"
-      BPNL00000003B0Q0: "BPN_N_TIER_A"
-      BPNS0000000008ZZ: "BPN_TRACEX_A_SITE_A"
-      BPNL00000003CNKC: "BPN_TRACEX_B"
-      BPNL00000003B6LU: "BPN_DISMANTLER"
-      BPNL00000003CML1: "BPN_TRACEX_A"
-      BPNS00000008BDFH: "BPN_TRACEX_B_SITE_A"
-      BPNL00000003B2OM: "BPN_TIER_A"
-      BPNL00000003CSGV: "BPN_TIER_C"
-      BPNL00000003B5MJ: "BPN_TIER_B"
-      BPNL00000003AXS3: "BPN_SUB_TIER_B"
-      BPNL00000003B3NX: "BPN_SUB_TIER_A"
-      BPNL00000000BJTL: "BPN_SUB_TIER_C"
+      BPNL00000003AZQP: "BPN_OEM_C"           # satest01
+      BPNL00000003AYRE: "BPN_OEM_A"           # satest02 # ___OEM___
+      BPNL00000003AVTH: "BPN_OEM_B"           # satest03
+      BPNL00000003AWSS: "BPN_IRS_TEST"        # satest04
+      BPNL00000003B0Q0: "BPN_N_TIER_A"        # satest05 # ___TierOne___
+      BPNS0000000008ZZ: "BPN_TRACEX_A_SITE_A" # satest06
+      BPNL00000003CNKC: "BPN_TRACEX_B"        # satest07
+      BPNL00000003B6LU: "BPN_DISMANTLER"      # satest08
+      BPNL00000003CML1: "BPN_TRACEX_A"        # satest09
+      BPNS00000008BDFH: "BPN_TRACEX_B_SITE_A" # satest10
+      BPNL00000003B2OM: "BPN_TIER_A"          # satest11 # ___TierTwo #1___
+      BPNL00000003CSGV: "BPN_TIER_C"          # satest12 # ___TierTwo #2___
+      BPNL00000003B5MJ: "BPN_TIER_B"          # satest13 # ___TierTwo #3___
+      BPNL00000003AXS3: "BPN_SUB_TIER_B"      # satest14
+      BPNL00000003B3NX: "BPN_SUB_TIER_A"      # satest15
+      BPNL00000000BJTL: "BPN_SUB_TIER_C"      # satest16
     clientId: sa-cl5-custodian-2
     clientSecret: UIqawwoohsvZ6AZOd1llLhnsUTKMWe4D
   # TLS to trust centralidp Keycloak instance of TLS enabled
@@ -675,95 +696,25 @@ managed-identity-wallet:
     className: "nginx"
     annotations:
       # uncomment the following line for tls
-      # cert-manager.io/cluster-issuer: "my-ca-issuer"
-      nginx.ingress.kubernetes.io/cors-allow-origin: http://portal.tractus-x-06.arena2036.de
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/cors-allow-origin: "http://portal.tractus-x-06.arena2036.de, https://portal.tractus-x-06.arena2036.de"
       nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
       nginx.ingress.kubernetes.io/cors-allow-methods: GET
       nginx.ingress.kubernetes.io/enable-cors: "true"
 
-dataconsumerOne:
-  enabled: true
-  seedTestdata: false
-  nameOverride: dataconsumer-1
-  secrets:
-    edc-miw-keycloak-secret: UbfW4CR1xH4OskkovqJ2JzcwnQIrG7oj
-  tractusx-connector:
-    nameOverride: dataconsumer-1-edc
-    participant:
-      id: BPNL00000003AZQP
-    controlplane:
-      ssi:
-        miw:
-          url: http://managed-identity-wallets.tractus-x-06.arena2036.de
-          authorityId: *authority-bpn
-        oauth:
-          tokenurl: http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/token
-          client:
-            id: satest01
-            secretAlias: edc-miw-keycloak-secret
-      endpoints:
-        management:
-          authKey: TEST1
-      ingresses:
-        - enabled: true
-          hostname: "dataconsumer-1-controlplane.tractus-x-06.arena2036.de"
-          endpoints:
-            - default
-            - protocol
-            - management
-          className: "nginx"
-          tls:
-            enabled: false
-    dataplane:
-      ingresses:
-        - enabled: true
-          hostname: "dataconsumer-1-dataplane.tractus-x-06.arena2036.de"
-          endpoints:
-            - default
-            - public
-          className: "nginx"
-          tls:
-            enabled: false
-    postgresql:
-      nameOverride: dataconsumer-1-db
-      jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-dataconsumer-1-db:5432/edc"
-      auth:
-        password: "dbpassworddataconsumerone"
-        postgresPassword: "dbpassworddataconsumerone"
-    vault:
-      hashicorp:
-        url: http://edc-dataconsumer-1-vault:8200
-      secretNames:
-        transferProxyTokenSignerPrivateKey: tokenSignerPrivateKey
-        transferProxyTokenSignerPublicKey: tokenSignerPublicKey
-        transferProxyTokenEncryptionAesKey: tokenEncryptionAesKey
-
-  vault:
-    nameOverride: edc-dataconsumer-1-vault
-    fullnameOverride: edc-dataconsumer-1-vault
-    enabled: true
-    server:
-      postStart: []
-
-  digital-twin-registry:
-    enabled: false
-
-  simple-data-backend:
-    enabled: false
-
-tx-data-provider:
+oem:
   enabled: true
   seedTestdata: true
-  backendUrl: http://{{ .Release.Name }}-dataprovider-submodelserver:8080
-  registryUrl: http://{{ .Release.Name }}-dataprovider-dtr:8080/api/v3.0
-  controlplanePublicUrl: http://{{ .Release.Name }}-dataprovider-edc-controlplane:8084
-  controlplaneManagementUrl: http://{{ .Release.Name }}-dataprovider-edc-controlplane:8081
-  dataplaneUrl: http://{{ .Release.Name }}-dataprovider-edc-dataplane:8081
-  nameOverride: dataprovider
+  backendUrl: http://{{ .Release.Name }}-oem-submodelserver:8080
+  registryUrl: http://{{ .Release.Name }}-oem-dtr:8080/api/v3.0
+  controlplanePublicUrl: http://{{ .Release.Name }}-oem-edc-controlplane:8084
+  controlplaneManagementUrl: http://{{ .Release.Name }}-oem-edc-controlplane:8081
+  dataplaneUrl: http://{{ .Release.Name }}-oem-edc-dataplane:8081
+  nameOverride: oem
   secrets:
     edc-miw-keycloak-secret: pyFUZP2L9UCSVJUScHcN3ZEgy2PGyEpg
   tractusx-connector:
-    nameOverride: dataprovider-edc
+    nameOverride: oem-edc
     participant:
       id: BPNL00000003AYRE
     controlplane:
@@ -778,10 +729,10 @@ tx-data-provider:
             secretAlias: edc-miw-keycloak-secret
       endpoints:
         management:
-          authKey: TEST2
+          authKey: ApiKeyDefaultValue
       ingresses:
         - enabled: true
-          hostname: "dataprovider-controlplane.tractus-x-06.arena2036.de"
+          hostname: "oem-controlplane.tractus-x-06.arena2036.de"
           endpoints:
             - default
             - protocol
@@ -792,7 +743,7 @@ tx-data-provider:
     dataplane:
       ingresses:
         - enabled: true
-          hostname: "dataprovider-dataplane.tractus-x-06.arena2036.de"
+          hostname: "oem-dataplane.tractus-x-06.arena2036.de"
           endpoints:
             - default
             - public
@@ -800,41 +751,471 @@ tx-data-provider:
           tls:
             enabled: false
     postgresql:
-      nameOverride: dataprovider-db
-      jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-dataprovider-db:5432/edc"
+      nameOverride: oem-db
+      jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-oem-db:5432/edc"
       auth:
         password: "dbpasswordtxdataprovider"
         postgresPassword: "dbpasswordtxdataprovider"
     vault:
       hashicorp:
-        url: http://edc-dataprovider-vault:8200
+        url: http://edc-oem-vault:8200
       secretNames:
         transferProxyTokenSignerPrivateKey: tokenSignerPrivateKey
         transferProxyTokenSignerPublicKey: tokenSignerPublicKey
         transferProxyTokenEncryptionAesKey: tokenEncryptionAesKey
 
   vault:
-    nameOverride: edc-dataprovider-vault
-    fullnameOverride: edc-dataprovider-vault
+    nameOverride: edc-oem-vault
+    fullnameOverride: edc-oem-vault
     enabled: true
     server:
       postStart: []
 
   digital-twin-registry:
     enabled: true
-    nameOverride: dataprovider-dtr
+    nameOverride: oem-dtr
     postgresql:
-      nameOverride: dataprovider-dtr-db
+      nameOverride: oem-dtr-db
       auth:
         password: "dbpassworddtrdataprovider"
         existingSecret: dataprovider-secret-dtr-postgres-init
     registry:
-      host: dataprovider-dtr.test
+      ingress:
+        enabled: false
+        urlPrefix: /semantics/registry
+      service:
+        port: 8080
+      host: oem-dtr.tractus-x-06.arena2036.de
+      annotations:
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
+        nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        nginx.ingress.kubernetes.io/enable-cors: "true"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
 
   simple-data-backend:
-    nameOverride: dataprovider-submodelserver
+    nameOverride: oem-submodelserver
     ingress:
       enabled: false
+    host: oem-sdb.tractus-x-06.arena2036.de
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+tierone:
+  enabled: true
+  seedTestdata: true
+  backendUrl: http://{{ .Release.Name }}-tierone-submodelserver:8080
+  registryUrl: http://{{ .Release.Name }}-tierone-dtr:8080/api/v3.0
+  controlplanePublicUrl: http://{{ .Release.Name }}-tierone-edc-controlplane:8084
+  controlplaneManagementUrl: http://{{ .Release.Name }}-tierone-edc-controlplane:8081
+  dataplaneUrl: http://{{ .Release.Name }}-tierone-edc-dataplane:8081
+  nameOverride: tierone
+  secrets:
+    edc-miw-keycloak-secret: dR00GN1AWCYbRGbZY8TXjs2YEPMeCxLF
+  tractusx-connector:
+    nameOverride: tierone-edc
+    participant:
+      id: BPNL00000003B0Q0
+    controlplane:
+      ssi:
+        miw:
+          url: http://managed-identity-wallets.tractus-x-06.arena2036.de
+          authorityId: *authority-bpn
+        oauth:
+          tokenurl: http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/token
+          client:
+            id: satest05
+            secretAlias: edc-miw-keycloak-secret
+      endpoints:
+        management:
+          authKey: ApiKeyDefaultValue
+      ingresses:
+        - enabled: true
+          hostname: "tierone-controlplane.tractus-x-06.arena2036.de"
+          endpoints:
+            - default
+            - protocol
+            - management
+          className: "nginx"
+          tls:
+            enabled: false
+    dataplane:
+      ingresses:
+        - enabled: true
+          hostname: "tierone-dataplane.tractus-x-06.arena2036.de"
+          endpoints:
+            - default
+            - public
+          className: "nginx"
+          tls:
+            enabled: false
+    postgresql:
+      nameOverride: tierone-db
+      jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-tierone-db:5432/edc"
+      auth:
+        password: "dbpasswordtxdataprovider"
+        postgresPassword: "dbpasswordtxdataprovider"
+    vault:
+      hashicorp:
+        url: http://edc-tierone-vault:8200
+      secretNames:
+        transferProxyTokenSignerPrivateKey: tokenSignerPrivateKey
+        transferProxyTokenSignerPublicKey: tokenSignerPublicKey
+        transferProxyTokenEncryptionAesKey: tokenEncryptionAesKey
+
+  vault:
+    nameOverride: edc-tierone-vault
+    fullnameOverride: edc-tierone-vault
+    enabled: true
+    server:
+      postStart: []
+
+  digital-twin-registry:
+    enabled: true
+    nameOverride: tierone-dtr
+    postgresql:
+      nameOverride: tierone-dtr-db
+      auth:
+        password: "dbpassworddtrdataprovider"
+        existingSecret: dataprovider-secret-dtr-postgres-init
+    registry:
+      ingress:
+        enabled: false
+        urlPrefix: /semantics/registry
+      service:
+        port: 8080
+      host: tierone-dtr.tractus-x-06.arena2036.de
+      annotations:
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
+        nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        nginx.ingress.kubernetes.io/enable-cors: "true"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+  simple-data-backend:
+    nameOverride: tierone-submodelserver
+    ingress:
+      enabled: false
+    host: tierone-sdb.tractus-x-06.arena2036.de
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+tiertwonoone:
+  enabled: true
+  seedTestdata: true
+  backendUrl: http://{{ .Release.Name }}-tiertwo-1-submodelserver:8080
+  registryUrl: http://{{ .Release.Name }}-tiertwo-1-dtr:8080/api/v3.0
+  controlplanePublicUrl: http://{{ .Release.Name }}-tiertwo-1-edc-controlplane:8084
+  controlplaneManagementUrl: http://{{ .Release.Name }}-tiertwo-1-edc-controlplane:8081
+  dataplaneUrl: http://{{ .Release.Name }}-tiertwo-1-edc-dataplane:8081
+  nameOverride: tiertwo-1
+  secrets:
+    edc-miw-keycloak-secret: CC3fz3dQGZsBp2NCbowOV65efBFZTgEO
+  tractusx-connector:
+    nameOverride: tiertwo-1-edc
+    participant:
+      id: BPNL00000003B2OM # BPN_TIER_A
+    controlplane:
+      ssi:
+        miw:
+          url: https://managed-identity-wallets.tractus-x-06.arena2036.de
+          authorityId: *authority-bpn
+        oauth:
+          tokenurl: http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/token
+          client:
+            id: satest11
+            secretAlias: edc-miw-keycloak-secret
+      endpoints:
+        management:
+          authKey: ApiKeyDefaultValue
+      ingresses:
+        - enabled: true
+          hostname: "tiertwo-1-controlplane.tractus-x-06.arena2036.de"
+          endpoints:
+            - default
+            - protocol
+            - management
+          className: "nginx"
+          tls:
+            enabled: false
+    dataplane:
+      ingresses:
+        - enabled: true
+          hostname: "tiertwo-1-dataplane.tractus-x-06.arena2036.de"
+          endpoints:
+            - default
+            - public
+          className: "nginx"
+          tls:
+            enabled: false
+    postgresql:
+      nameOverride: tiertwo-1-db
+      jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-tiertwo-1-db:5432/edc"
+      auth:
+        password: "dbpassworddataconsumerone"
+        postgresPassword: "dbpassworddataconsumerone"
+    vault:
+      hashicorp:
+        url: http://edc-tiertwo-1-vault:8200
+      secretNames:
+        transferProxyTokenSignerPrivateKey: tokenSignerPrivateKey
+        transferProxyTokenSignerPublicKey: tokenSignerPublicKey
+        transferProxyTokenEncryptionAesKey: tokenEncryptionAesKey
+
+  vault:
+    nameOverride: edc-tiertwo-1-vault
+    fullnameOverride: edc-tiertwo-1-vault
+    enabled: true
+    server:
+      postStart: []
+
+  digital-twin-registry:
+    enabled: true
+    nameOverride: tiertwo-1-dtr
+    postgresql:
+      nameOverride: tiertwo-1-dtr-db
+      auth:
+        password: "dbpassworddtrdataprovider"
+        existingSecret: dataprovider-secret-dtr-postgres-init
+    registry:
+      ingress:
+        enabled: false
+        urlPrefix: /semantics/registry
+      service:
+        port: 8080
+      host: tiertwo-1-dtr.tractus-x-06.arena2036.de
+      annotations:
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
+        nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        nginx.ingress.kubernetes.io/enable-cors: "true"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+  simple-data-backend:
+    nameOverride: tiertwo-1-submodelserver
+    ingress:
+      enabled: false
+    host: tiertwo-1-sdb.tractus-x-06.arena2036.de
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+tiertwonotwo:
+  enabled: true
+  seedTestdata: true
+  backendUrl: http://{{ .Release.Name }}-tiertwo-2-submodelserver:8080
+  registryUrl: http://{{ .Release.Name }}-tiertwo-2-dtr:8080/api/v3.0
+  controlplanePublicUrl: http://{{ .Release.Name }}-tiertwo-2-edc-controlplane:8084
+  controlplaneManagementUrl: http://{{ .Release.Name }}-tiertwo-2-edc-controlplane:8081
+  dataplaneUrl: http://{{ .Release.Name }}-tiertwo-2-edc-dataplane:8081
+  nameOverride: tiertwo-2
+  secrets:
+    edc-miw-keycloak-secret: 2gjSlFxBO7spEM4aTz3f8CqDS0klbt7C
+  tractusx-connector:
+    nameOverride: tiertwo-2-edc
+    participant:
+      id: BPNL00000003CSGV # BPN_TIER_C
+    controlplane:
+      ssi:
+        miw:
+          url: http://managed-identity-wallets.tractus-x-06.arena2036.de
+          authorityId: *authority-bpn
+        oauth:
+          tokenurl: http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/token
+          client:
+            id: satest12
+            secretAlias: edc-miw-keycloak-secret
+      endpoints:
+        management:
+          authKey: ApiKeyDefaultValue
+      ingresses:
+        - enabled: true
+          hostname: "tiertwo-2-controlplane.tractus-x-06.arena2036.de"
+          endpoints:
+            - default
+            - protocol
+            - management
+          className: "nginx"
+          tls:
+            enabled: false
+    dataplane:
+      ingresses:
+        - enabled: true
+          hostname: "tiertwo-2-dataplane.tractus-x-06.arena2036.de"
+          endpoints:
+            - default
+            - public
+          className: "nginx"
+          tls:
+            enabled: false
+    postgresql:
+      nameOverride: tiertwo-2-db
+      jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-tiertwo-2-db:5432/edc"
+      auth:
+        password: "dbpassworddataconsumertwo"
+        postgresPassword: "dbpassworddataconsumertwo"
+    vault:
+      hashicorp:
+        url: http://edc-tiertwo-2-vault:8200
+      secretNames:
+        transferProxyTokenSignerPrivateKey: tokenSignerPrivateKey
+        transferProxyTokenSignerPublicKey: tokenSignerPublicKey
+        transferProxyTokenEncryptionAesKey: tokenEncryptionAesKey
+
+  vault:
+    nameOverride: edc-tiertwo-2-vault
+    fullnameOverride: edc-tiertwo-2-vault
+    enabled: true
+    server:
+      postStart: []
+
+  digital-twin-registry:
+    enabled: true
+    nameOverride: tiertwo-2-dtr
+    postgresql:
+      nameOverride: tiertwo-2-dtr-db
+      auth:
+        password: "dbpassworddtrdataprovider"
+        existingSecret: dataprovider-secret-dtr-postgres-init
+    registry:
+      ingress:
+        enabled: false
+        urlPrefix: /semantics/registry
+      service:
+        port: 8080
+      host: tiertwo-2-dtr.tractus-x-06.arena2036.de
+      annotations:
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
+        nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        nginx.ingress.kubernetes.io/enable-cors: "true"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+  simple-data-backend:
+    nameOverride: tiertwo-2-submodelserver
+    ingress:
+      enabled: false
+    host: tiertwo-2-sdb.tractus-x-06.arena2036.de
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+tiertwonothree:
+  enabled: true
+  seedTestdata: true
+  backendUrl: http://{{ .Release.Name }}-tiertwo-3-submodelserver:8080
+  registryUrl: http://{{ .Release.Name }}-tiertwo-3-dtr:8080/api/v3.0
+  controlplanePublicUrl: http://{{ .Release.Name }}-tiertwo-3-edc-controlplane:8084
+  controlplaneManagementUrl: http://{{ .Release.Name }}-tiertwo-3-edc-controlplane:8081
+  dataplaneUrl: http://{{ .Release.Name }}-tiertwo-3-edc-dataplane:8081
+  nameOverride: tiertwo-3
+  secrets:
+    edc-miw-keycloak-secret: 3YQzDqEsdUZ83DVHSIRYUCK4pot61r5M
+  tractusx-connector:
+    nameOverride: tiertwo-3-edc
+    participant:
+      id: BPNL00000003B5MJ # BPN_TIER_B
+    controlplane:
+      ssi:
+        miw:
+          url: http://managed-identity-wallets.tractus-x-06.arena2036.de
+          authorityId: *authority-bpn
+        oauth:
+          tokenurl: http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/token
+          client:
+            id: satest13
+            secretAlias: edc-miw-keycloak-secret
+      endpoints:
+        management:
+          authKey: ApiKeyDefaultValue
+      ingresses:
+        - enabled: true
+          hostname: "tiertwo-3-controlplane.tractus-x-06.arena2036.de"
+          endpoints:
+            - default
+            - protocol
+            - management
+          className: "nginx"
+          tls:
+            enabled: false
+    dataplane:
+      ingresses:
+        - enabled: true
+          hostname: "tiertwo-3-dataplane.tractus-x-06.arena2036.de"
+          endpoints:
+            - default
+            - public
+          className: "nginx"
+          tls:
+            enabled: false
+    postgresql:
+      nameOverride: tiertwo-3-db
+      jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-tiertwo-3-db:5432/edc"
+      auth:
+        password: "dbpassworddataconsumertwo"
+        postgresPassword: "dbpassworddataconsumertwo"
+    vault:
+      hashicorp:
+        url: http://edc-tiertwo-3-vault:8200
+      secretNames:
+        transferProxyTokenSignerPrivateKey: tokenSignerPrivateKey
+        transferProxyTokenSignerPublicKey: tokenSignerPublicKey
+        transferProxyTokenEncryptionAesKey: tokenEncryptionAesKey
+
+  vault:
+    nameOverride: edc-tiertwo-3-vault
+    fullnameOverride: edc-tiertwo-3-vault
+    enabled: true
+    server:
+      postStart: []
+
+  digital-twin-registry:
+    enabled: true
+    nameOverride: tiertwo-3-dtr
+    postgresql:
+      nameOverride: tiertwo-3-dtr-db
+      auth:
+        password: "dbpassworddtrdataprovider"
+        existingSecret: dataprovider-secret-dtr-postgres-init
+    registry:
+      ingress:
+        enabled: false
+        urlPrefix: /semantics/registry
+      service:
+        port: 8080
+      host: tiertwo-3-dtr.tractus-x-06.arena2036.de
+      annotations:
+        cert-manager.io/cluster-issuer: "my-ca-issuer"
+        nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        nginx.ingress.kubernetes.io/enable-cors: "true"
+        nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+  simple-data-backend:
+    nameOverride: tiertwo-3-submodelserver
+    ingress:
+      enabled: false
+    host: tiertwo-3-sdb.tractus-x-06.arena2036.de
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
 
 semantic-hub:
   enabled: true
@@ -851,82 +1232,25 @@ semantic-hub:
       initialDelaySeconds: 200
     readinessProbe:
       initialDelaySeconds: 200
+  host: semantics.tractus-x-06.arena2036.de
+  ingress:
+    enabled: true
+    tls: false
+    urlPrefix: "/hub"
+    className: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$2"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+      nginx.ingress.kubernetes.io/x-forwarded-prefix: "/hub"
   graphdb:
     enabled: false
     image: jena-fuseki-docker:4.7.0
     imagePullPolicy: Never
     storageClassName: ""
     storageSize: 8Gi
-
-dataconsumerTwo:
-  enabled: true
-  seedTestdata: false
-  nameOverride: dataconsumer-2
-  secrets:
-    edc-miw-keycloak-secret: tPwy4exxH1sXBRQouobSA2nNVaaPuwCs
-  tractusx-connector:
-    nameOverride: dataconsumer-2-edc
-    participant:
-      id: BPNL00000003AVTH
-    controlplane:
-      ssi:
-        miw:
-          url: http://managed-identity-wallets.tractus-x-06.arena2036.de
-          authorityId: *authority-bpn
-        oauth:
-          tokenurl: http://centralidp.tractus-x-06.arena2036.de/auth/realms/CX-Central/protocol/openid-connect/token
-          client:
-            id: satest03
-            secretAlias: edc-miw-keycloak-secret
-      endpoints:
-        management:
-          authKey: TEST3
-      ingresses:
-        - enabled: true
-          hostname: "dataconsumer-2-controlplane.tractus-x-06.arena2036.de"
-          endpoints:
-            - default
-            - protocol
-            - management
-          className: "nginx"
-          tls:
-            enabled: false
-    dataplane:
-      ingresses:
-        - enabled: true
-          hostname: "dataconsumer-2-dataplane.tractus-x-06.arena2036.de"
-          endpoints:
-            - default
-            - public
-          className: "nginx"
-          tls:
-            enabled: false
-    postgresql:
-      nameOverride: dataconsumer-2-db
-      jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-dataconsumer-2-db:5432/edc"
-      auth:
-        password: "dbpassworddataconsumertwo"
-        postgresPassword: "dbpassworddataconsumertwo"
-    vault:
-      hashicorp:
-        url: http://edc-dataconsumer-2-vault:8200
-      secretNames:
-        transferProxyTokenSignerPrivateKey: tokenSignerPrivateKey
-        transferProxyTokenSignerPublicKey: tokenSignerPublicKey
-        transferProxyTokenEncryptionAesKey: tokenEncryptionAesKey
-
-  vault:
-    nameOverride: edc-dataconsumer-2-vault
-    fullnameOverride: edc-dataconsumer-2-vault
-    enabled: true
-    server:
-      postStart: []
-
-  digital-twin-registry:
-    enabled: false
-
-  simple-data-backend:
-    enabled: false
 
 pgadmin4:
   enabled: true
@@ -944,12 +1268,51 @@ pgadmin4:
           - path: /
             pathType: Prefix
 
+
+# ##############################################################################
+# Patches
+# ##############################################################################
+
+# DTR Ingress
+dtr:
+  ingress:
+    enabled: true
+    urlPrefix: /
+  service:
+    port: 8080
+  hosts:
+    - host: oem-dtr.tractus-x-06.arena2036.de
+      serviceName: umbrella-oem-dtr
+    - host: tierone-dtr.tractus-x-06.arena2036.de
+      serviceName: umbrella-tierone-dtr
+    - host: tiertwo-1-dtr.tractus-x-06.arena2036.de
+      serviceName: umbrella-tiertwo-1-dtr
+    - host: tiertwo-2-dtr.tractus-x-06.arena2036.de
+      serviceName: umbrella-tiertwo-2-dtr
+    - host: tiertwo-3-dtr.tractus-x-06.arena2036.de
+      serviceName: umbrella-tiertwo-3-dtr
+  annotations:
+    cert-manager.io/cluster-issuer: "my-ca-issuer"
+    nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "*"
+
 # ##############################################################################
 # Basyx
 # ##############################################################################
 
 basyx:
   name: basyx
+  hostname: tractus-x-06.arena2036.de
+  deployments:
+    - name: oem
+    - name: tierone
+    - name: tiertwo-1
+    - name: tiertwo-2
+    - name: tiertwo-3
 
 mongo:
   image: mongo:5.0.10
@@ -965,13 +1328,28 @@ aasEnv:
   port: 8081
   ingress:
     enabled: true
-    hostname: aas-env.tractus-x-06.arena2036.de
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+      nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+      nginx.ingress.kubernetes.io/cors-allow-methods: "*"
+
 
 aasRegistry:
   image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
   port: 8082
   ingress:
     enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.tractus-x-06.arena2036.de/*, https://aas-webui.tractus-x-06.arena2036.de"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     hostname: aas-registry.tractus-x-06.arena2036.de
 
 smRegistry:
@@ -979,6 +1357,13 @@ smRegistry:
   port: 8083
   ingress:
     enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.tractus-x-06.arena2036.de/*, https://aas-webui.tractus-x-06.arena2036.de"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     hostname: sm-registry.tractus-x-06.arena2036.de
 
 aasDiscovery:
@@ -986,17 +1371,31 @@ aasDiscovery:
   port: 8084
   ingress:
     enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.tractus-x-06.arena2036.de/*, https://aas-webui.tractus-x-06.arena2036.de"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     hostname: aas-discovery.tractus-x-06.arena2036.de
 
 aasWebUI:
   image: eclipsebasyx/aas-gui:v2-240515
   port: 3000
-  aasRegistryPath: http://basyx-aas-registry:8080
-  submodelRegistryPath: http://basyx-sm-registry:8080
-  aasDiscoveryPath: http://basyx-aas-discovery:8081
-  aasRepoPath: http://basyx-aas-env:8081/shells
-  submodelRepoPath: http://basyx-aas-env:8081/submodels
-  cdRepoPath: http://basyx-aas-env:8081/concept-descriptions
+  aasRepoPath: https://aas-env.tractus-x-06.arena2036.de/shells
+  submodelRepoPath: https://aas-env.tractus-x-06.arena2036.de/submodels
+  cdRepoPath: https://aas-env.tractus-x-06.arena2036.de/concept-descriptions
+  aasRegistryPath: https://aas-registry.tractus-x-06.arena2036.de
+  submodelRegistryPath: https://sm-registry.tractus-x-06.arena2036.de
+  aasDiscoveryPath: https://aas-discovery.tractus-x-06.arena2036.de
   ingress:
     enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: "my-ca-issuer"
+      nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/cors-allow-origin: "https://*.tractus-x-06.arena2036.de/*, https://aas-webui.tractus-x-06.arena2036.de"
+      nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     hostname: aas-webui.tractus-x-06.arena2036.de

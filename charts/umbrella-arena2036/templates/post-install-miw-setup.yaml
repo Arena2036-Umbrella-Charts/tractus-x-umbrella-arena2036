@@ -38,7 +38,7 @@ metadata:
     # job is considered part of the release.
     "helm.sh/hook": post-install
     "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+{{/*    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded*/}}
 spec:
   template:
     metadata:
@@ -63,8 +63,20 @@ spec:
               --post-data 'grant_type=client_credentials&client_id={{ $miwUser }}&client_secret={{ $miwSecret }}'
               TOKEN=`cat token | grep -o '"access_token": *"[^"]*"' | sed 's#"access_token":"\(.*\)"#\1#'` && export TOKEN
 
+              echo "___"
+              echo "wget {{$keycloakPath}} --header 'Content-Type: application/x-www-form-urlencoded' --post-data 'grant_type=client_credentials&client_id={{ $miwUser }}&client_secret={{ $miwSecret }}'"
+              echo "___"
+
+              echo "___"
+              echo $TOKEN
+              echo "___"
+
               {{- range $bpn, $companyName := index .Values "managed-identity-wallet" "seeding" "companies" }}
               wget --header "Content-Type: application/json" --header "Authorization: Bearer $TOKEN" \
               --post-data '{"bpn": "{{ $bpn }}", "name": "{{ $companyName }}"}' "{{ $miwUrl }}/api/wallets" -S -O -
               {{- end }}
+
+              echo "___"
+              echo $TOKEN
+              echo "___"
 {{ end }}
